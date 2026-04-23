@@ -1,6 +1,21 @@
 .ipynb_checkpoints/
 venv/
 
+# Python bytecode and cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Logs
+*.log
+
+# Training test outputs
+training_tests*.txt
+
+# Notebook and editor artifacts
+*.ipynb_checkpoints
+.vscode/
+
 ai_logs.docx
 final_project_proposal.docx
 final_project_proposal.pdf
@@ -8,3 +23,4 @@ final_project_requirements.pdf
 
 data/
 models/
+

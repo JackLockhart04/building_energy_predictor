@@ -21,3 +21,5 @@ fastapi (Api)
 uvicorn (Api thing)
 joblib (Loads models)
 xgboost (Runs model)
+requests
+scikit-learn (Linear regression)

@@ -2,37 +2,73 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Campus Energy Forecast</title>
+    <title>Campus Energy Comparison</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <div class="app">
         <header>
             <h1>Campus Energy</h1>
-            <input type="text" id="search" placeholder="Search buildings..." autocomplete="off">
+            <div class="search-container">
+                <input type="text" id="search" placeholder="Search buildings..." autocomplete="off">
+                <div id="results" class="hidden"></div>
+            </div>
         </header>
-
-        <div id="results" class="hidden"></div>
 
         <section id="details" class="hidden">
             <h2 id="b-name"></h2>
+            <div class="controls">
+                <label>Target Date</label>
+                <input type="datetime-local" id="prediction-date" step="3600">
+                <div class="button-group">
+                    <button id="predict-hour-btn">Predict Hour</button>
+                    <button id="predict-day-btn" class="secondary">Predict Full Day</button>
+                </div>
+            </div>
             <div class="grid">
                 <div><label>Area</label><p id="b-sqft"></p></div>
-                <div><label>Year Built</label><p id="b-year"></p></div>
+                <div><label>Year</label><p id="b-year"></p></div>
                 <div><label>Floors</label><p id="b-floors"></p></div>
             </div>
-            <button id="predict-btn">Predict Energy Use</button>
         </section>
 
-        <section id="history-container" class="hidden">
-            <div class="current-result">
-                <label>Most Recent Result</label>
-                <h2 id="current-kwh">-- kWh</h2>
+        <section id="forecast-container" class="hidden">
+            <div class="comparison-grid">
+                <div class="model-column">
+                    <div class="summary-box">
+                        <label>XGBoost</label>
+                        <h2 id="xgb-kwh">-- kWh</h2>
+                        <p id="xgb-weather" class="weather-sub"></p>
+                    </div>
+                    <div class="chart-container hidden" id="xgb-chart-box">
+                        <canvas id="xgbChart"></canvas>
+                    </div>
+                    <label class="section-label">Hourly Forecast</label>
+                    <div id="xgb-list" class="hourly-scroller"></div>
+                    <div class="history-block">
+                        <h3>XGBoost History</h3>
+                        <div id="xgb-history" class="small-history"></div>
+                    </div>
+                </div>
+
+                <div class="model-column">
+                    <div class="summary-box">
+                        <label>Linear Regression</label>
+                        <h2 id="lr-kwh">-- kWh</h2>
+                        <p id="lr-weather" class="weather-sub"></p>
+                    </div>
+                    <div class="chart-container hidden" id="lr-chart-box">
+                        <canvas id="lrChart"></canvas>
+                    </div>
+                    <label class="section-label">Hourly Forecast</label>
+                    <div id="lr-list" class="hourly-scroller"></div>
+                    <div class="history-block">
+                        <h3>Linear History</h3>
+                        <div id="lr-history" class="small-history"></div>
+                    </div>
+                </div>
             </div>
-            
-            <h3>Recent History</h3>
-            <div id="history-list"></div>
         </section>
     </div>
     <script src="script.js"></script>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Energy Forecast</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app">
+        <header>
+            <h1>Campus Energy</h1>
+            <input type="text" id="search" placeholder="Search buildings..." autocomplete="off">
+        </header>
+
+        <div id="results" class="hidden"></div>
+
+        <section id="details" class="hidden">
+            <h2 id="b-name"></h2>
+            <div class="grid">
+                <div><label>Area</label><p id="b-sqft"></p></div>
+                <div><label>Year Built</label><p id="b-year"></p></div>
+                <div><label>Floors</label><p id="b-floors"></p></div>
+            </div>
+            <button id="predict-btn">Predict Energy Use</button>
+        </section>
+
+        <section id="history-container" class="hidden">
+            <div class="current-result">
+                <label>Most Recent Result</label>
+                <h2 id="current-kwh">-- kWh</h2>
+            </div>
+            
+            <h3>Recent History</h3>
+            <div id="history-list"></div>
+        </section>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

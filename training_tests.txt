@@ -1,0 +1,44 @@
+Training Duration: 471.51s
+------------------------------
+Final RMSE:    68.8718
+CVRMSE:        46.57%
+Final MAE:     29.6230
+NMAE:          20.03%
+------------------------------
+                   feature  importance
+8                     sqft    0.271827
+10                sub_type    0.260163
+12        number_of_floors    0.125355
+9      primary_space_usage    0.076175
+11              year_built    0.075028
+5                     hour    0.050206
+2                      CDH    0.044378
+1   apparent_temperature_f    0.022408
+4             temp_roll_3h    0.022337
+6                 day_week    0.014571
+0            temperature_f    0.014436
+3                      HDH    0.013486
+7                    month    0.009631
+
+
+Training Duration: 5653.84s
+------------------------------
+Final RMSE:    65.8747
+CVRMSE:        44.54%
+Final MAE:     27.4085
+NMAE:          18.53%
+------------------------------
+                   feature  importance
+8                     sqft    0.256106
+10                sub_type    0.237826
+12        number_of_floors    0.134616
+9      primary_space_usage    0.103028
+11              year_built    0.083387
+5                     hour    0.046464
+2                      CDH    0.034095
+4             temp_roll_3h    0.028821
+1   apparent_temperature_f    0.021154
+0            temperature_f    0.018809
+6                 day_week    0.014530
+3                      HDH    0.011023
+7                    month    0.010141

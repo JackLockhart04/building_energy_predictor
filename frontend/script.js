@@ -11,20 +11,16 @@ async function init() {
         return { name, floors, usage, sqft, sub_usage, year };
     });
     const now = new Date();
-    now.setMinutes(0, 0, 0); 
-    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-    document.getElementById('prediction-date').value = now.toISOString().slice(0, 16);
+    const localNow = new Date(now.getTime() - (now.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
+    document.getElementById('prediction-date').value = localNow;
 }
 
 async function runPredict(isDay = false) {
     if (!selected) return;
-    const timeInput = document.getElementById('prediction-date').value;
-    const cleanTime = new Date(timeInput);
-    cleanTime.setMinutes(0, 0, 0); 
-    const finalTimeString = cleanTime.toISOString().slice(0, 16);
+    const timeInput = document.getElementById('prediction-date').value; 
     
     const payload = {
-        prediction_time: finalTimeString,
+        prediction_time: timeInput,
         sqft: parseFloat(selected.sqft),
         primary_space_usage: selected.usage, 
         sub_type: selected.sub_usage,
@@ -50,7 +46,6 @@ async function runPredict(isDay = false) {
         const lrData = await lrR.json();
 
         document.getElementById('forecast-container').classList.remove('hidden');
-        
         updateSide('xgb', isDay ? xgbData : [xgbData], isDay);
         updateSide('lr', isDay ? lrData : [lrData], isDay);
     } catch (e) { console.error(e); }
@@ -60,13 +55,10 @@ function updateSide(type, data, isDay) {
     const total = data.reduce((sum, item) => sum + item.kwh, 0);
     const displayVal = isDay ? total.toFixed(1) : data[0].kwh.toFixed(2);
     
-    // Labeling the main number
     document.getElementById(`${type}-kwh`).innerText = `${displayVal} kWh`;
-    
     const temp = isDay ? (data.reduce((s,i)=>s+i.temp,0)/24).toFixed(0) : data[0].temp.toFixed(0);
     document.getElementById(`${type}-weather`).innerText = `Temp: ${temp}°F`;
 
-    // Labeling the hourly numbers
     document.getElementById(`${type}-list`).innerHTML = data.map(d => `
         <div class="hour-card">
             <span>${d.time}</span>
@@ -82,7 +74,8 @@ function updateSide(type, data, isDay) {
     } else {
         chartBox.classList.add('hidden');
     }
-
+    
+    // Pass the building name and the prediction type to the history function
     addHistory(type, selected.name, displayVal, isDay);
 }
 
@@ -98,31 +91,24 @@ function renderChart(type, data) {
                 data: data.map(d => d.kwh),
                 borderColor: type === 'xgb' ? '#9e1b32' : '#444',
                 borderWidth: 2,
-                fill: false,
-                tension: 0.3,
-                pointRadius: 0
+                fill: false, tension: 0.3, pointRadius: 0
             }]
         },
         options: { 
-            responsive: true, 
-            maintainAspectRatio: false,
+            responsive: true, maintainAspectRatio: false,
             plugins: { legend: { display: false } },
-            scales: { 
-                x: { ticks: { display: false } }, 
-                y: { 
-                    beginAtZero: true,
-                    ticks: { callback: (value) => value + ' kWh' } // Labeling Y-axis
-                } 
-            }
+            scales: { x: { ticks: { display: false } }, y: { beginAtZero: true, ticks: { callback: (v) => v + ' kWh' } } }
         }
     });
 }
 
 function addHistory(type, name, val, isDay) {
-    histories[type].unshift({ name, val, time: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) });
+    const typeLabel = isDay ? "Daily" : "Hourly";
+    histories[type].unshift({ name, val, typeLabel });
+    
     document.getElementById(`${type}-history`).innerHTML = histories[type].slice(0, 5).map(h => `
         <div class="history-item">
-            <b>${h.val} kWh</b> <span style="color:#888; float:right;">${h.time}</span>
+            <span>${h.name}: <b>${h.val} kWh</b> (${h.typeLabel})</span>
         </div>
     `).join('');
 }

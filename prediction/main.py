@@ -25,8 +25,8 @@ lr_model = None
 
 # --- LOAD MODELS ---
 try:
-    xgb_model = joblib.load('models/xgboost_model_final.pkl')
-    lr_model = joblib.load('models/linear_regression_final.pkl')
+    xgb_model = joblib.load('../models/xgboost_model_final.pkl')
+    lr_model = joblib.load('../models/linear_regression_final.pkl')
     print("Successfully loaded XGBoost and Linear Regression models.")
 except Exception as e:
     print(f"CRITICAL ERROR loading models: {e}")

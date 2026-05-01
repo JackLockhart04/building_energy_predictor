@@ -16,12 +16,11 @@ training_tests*.txt
 *.ipynb_checkpoints
 .vscode/
 
-ai_logs.docx
-final_project_proposal.docx
 final_project_proposal.pdf
 final_project_requirements.pdf
 presentation_plan_slides.pdf
 
 data/
-models/
-
+training_results/
+figures/
+misc/

@@ -13,8 +13,8 @@ async function init() {
 
         // Your CSV loading code
         // IMPORTANT: In a module, the path is relative to the SCRIPT file location
-        const res = await fetch(window.location.origin + window.location.pathname.replace(/\/$/, "") + "/buildings/building_data.csv");
-        const text = await res.text();
+// This points directly to the raw file on GitHub
+const res = await fetch('https://raw.githubusercontent.com/jacklockhart04/building_energy_predictor/main/buildings/building_data.csv');        const text = await res.text();
         
         buildings = text.split('\n').slice(1).filter(r => r.trim()).map(row => {
             const [name, floors, usage, sqft, sub_usage, year] = row.split(',').map(i => i.trim());

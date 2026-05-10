@@ -16,7 +16,7 @@ async function init() {
 
         // Your CSV loading code
         // IMPORTANT: In a module, the path is relative to the SCRIPT file location
-        const res = await fetch('buildings/building_data.csv'); 
+        const res = await fetch('./buildings/building_data.csv'); 
         const text = await res.text();
         
         buildings = text.split('\n').slice(1).filter(r => r.trim()).map(row => {

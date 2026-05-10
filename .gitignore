@@ -25,3 +25,5 @@ training_results/
 figures/
 misc/
 submission/
+*.zip
+main.pdf

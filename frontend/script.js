@@ -1,54 +1,72 @@
+import { Client } from "https://cdn.jsdelivr.net/npm/@gradio/client/dist/index.min.js";
+
+let client = null;
 let buildings = [];
 let selected = null;
 let histories = { xgb: [], lr: [] };
 let charts = { xgb: null, lr: null };
 
 async function init() {
-    const res = await fetch('../buildings/building_data.csv');
-    const text = await res.text();
-    buildings = text.split('\n').slice(1).filter(r => r.trim()).map(row => {
-        const [name, floors, usage, sqft, sub_usage, year] = row.split(',').map(i => i.trim());
-        return { name, floors, usage, sqft, sub_usage, year };
-    });
-    const now = new Date();
-    const localNow = new Date(now.getTime() - (now.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
-    document.getElementById('prediction-date').value = localNow;
+    try {
+        console.log("Connecting to Hugging Face...");
+        
+        // This will now work because 'Client' is imported above
+        client = await Client.connect("JackRabbit14/ua_electricity_prediction_engine");
+        console.log("Connected to Hugging Face Backend");
+
+        // Your CSV loading code
+        // IMPORTANT: In a module, the path is relative to the SCRIPT file location
+        const res = await fetch('../buildings/building_data.csv'); 
+        const text = await res.text();
+        
+        buildings = text.split('\n').slice(1).filter(r => r.trim()).map(row => {
+            const [name, floors, usage, sqft, sub_usage, year] = row.split(',').map(i => i.trim());
+            return { name, floors, usage, sqft, sub_usage, year };
+        });
+
+        const now = new Date();
+        const localNow = new Date(now.getTime() - (now.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
+        document.getElementById('prediction-date').value = localNow;
+        
+    } catch (err) {
+        console.error("Initialization Error:", err);
+    }
 }
 
 async function runPredict(isDay = false) {
-    if (!selected) return;
+    if (!selected || !client) return;
+
     const timeInput = document.getElementById('prediction-date').value; 
-    
+    const modeLabel = isDay ? "Full Day" : "Single Hour";
+
     const payload = {
         prediction_time: timeInput,
         sqft: parseFloat(selected.sqft),
-        primary_space_usage: selected.usage, 
+        usage: selected.usage,
         sub_type: selected.sub_usage,
-        year_built: parseFloat(selected.year), 
-        number_of_floors: parseFloat(selected.floors)
+        year: parseFloat(selected.year),
+        floors: parseFloat(selected.floors),
+        model_choice: "XGBoost",
+        mode: modeLabel
     };
 
-    const suffix = isDay ? 'predict_day' : 'predict';
-
     try {
-        const [xgbR, lrR] = await Promise.all([
-            fetch(`http://127.0.0.1:8000/${suffix}/xgboost`, {
-                method: 'POST', headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify(payload)
-            }),
-            fetch(`http://127.0.0.1:8000/${suffix}/linear`, {
-                method: 'POST', headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify(payload)
-            })
+        const [xgbRes, lrRes] = await Promise.all([
+            client.predict("/predict_json", [payload]),
+            client.predict("/predict_json", [{ ...payload, model_choice: "Linear Regression" }])
         ]);
 
-        const xgbData = await xgbR.json();
-        const lrData = await lrR.json();
+        // Gradio returns data[0] for the JSON output
+        const xgbData = xgbRes.data[0];
+        const lrData = lrRes.data[0];
 
         document.getElementById('forecast-container').classList.remove('hidden');
-        updateSide('xgb', isDay ? xgbData : [xgbData], isDay);
-        updateSide('lr', isDay ? lrData : [lrData], isDay);
-    } catch (e) { console.error(e); }
+        updateSide('xgb', xgbData, isDay);
+        updateSide('lr', lrData, isDay);
+
+    } catch (e) {
+        console.error("Prediction Error:", e);
+    }
 }
 
 function updateSide(type, data, isDay) {
@@ -136,4 +154,4 @@ document.getElementById('search').oninput = (e) => {
 
 document.getElementById('predict-hour-btn').onclick = () => runPredict(false);
 document.getElementById('predict-day-btn').onclick = () => runPredict(true);
-init();
+init().catch(console.error);

@@ -33,4 +33,4 @@ Must open frontend/index.html with a web host. I used live server extension in V
 
 Must have environment setup.
 Must be in prediction dir.
-Run main.py
+Run main.py with python

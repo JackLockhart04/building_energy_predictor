@@ -7,16 +7,13 @@ let histories = { xgb: [], lr: [] };
 let charts = { xgb: null, lr: null };
 
 async function init() {
-    try {
-        console.log("Connecting to Hugging Face...");
-        
+    try { 
         // This will now work because 'Client' is imported above
         client = await Client.connect("JackRabbit14/ua_electricity_prediction_engine");
-        console.log("Connected to Hugging Face Backend");
 
         // Your CSV loading code
         // IMPORTANT: In a module, the path is relative to the SCRIPT file location
-        const res = await fetch('buildings/building_data.csv'); 
+        const res = await fetch(window.location.origin + window.location.pathname.replace(/\/$/, "") + "/buildings/building_data.csv");
         const text = await res.text();
         
         buildings = text.split('\n').slice(1).filter(r => r.trim()).map(row => {

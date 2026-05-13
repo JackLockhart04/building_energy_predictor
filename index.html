@@ -21,10 +21,11 @@
             <div class="controls">
                 <label>Target Date</label>
                 <input type="datetime-local" id="prediction-date" step="3600">
-                <div class="button-group">
+                <div class="button-group" id="button-group">
                     <button id="predict-hour-btn">Predict Hour</button>
                     <button id="predict-day-btn" class="secondary">Predict Full Day</button>
                 </div>
+                <div id="loading-message" class="hidden">Loading...</div>
             </div>
             <div class="grid">
                 <div><label>Area</label><p id="b-sqft"></p></div>
@@ -71,7 +72,6 @@
             </div>
         </section>
     </div>
-	<script src="https://cdn.jsdelivr.net/npm/@gradio/client@0.12.3/dist/index.umd.js"></script>
     <script type="module" src="script.js"></script>
 </body>
 </html>

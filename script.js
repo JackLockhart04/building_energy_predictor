@@ -34,6 +34,9 @@ async function init() {
 async function runPredict(isDay = false) {
     if (!selected || !client) return;
 
+    // Show loading message
+    document.getElementById('loading-message').classList.remove('hidden');
+
     const timeInput = document.getElementById('prediction-date').value; 
     const modeLabel = isDay ? "Full Day" : "Single Hour";
 
@@ -64,6 +67,9 @@ async function runPredict(isDay = false) {
 
     } catch (e) {
         console.error("Prediction Error:", e);
+    } finally {
+        // Hide loading message
+        document.getElementById('loading-message').classList.add('hidden');
     }
 }
 
